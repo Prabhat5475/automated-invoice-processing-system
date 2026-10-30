@@ -12,6 +12,7 @@ A Python-based invoice processing system that reads invoice records from CSV fil
 - **Excel Export:** Generates formatted Excel files containing processed invoices.
 - **Financial Reports:** Generates revenue, payment status, and customer-wise reports.
 - **Report Export:** Exports financial reports into a separate Excel workbook.
+- **Automated Testing:** Includes unit tests for invoice validation.
 
 ## Technology Stack
 
@@ -43,7 +44,9 @@ Invoice_process/
 │   └── report_export.py
 │
 ├── tests/
-├── .env
+│   └── test_validator.py
+│
+├── .env.example
 ├── .gitignore
 ├── requirements.txt
 └── README.md
@@ -51,22 +54,43 @@ Invoice_process/
 
 ## Installation and Setup
 
-1. Clone the repository.
-2. Create and activate a Python virtual environment.
+1. Clone the repository:
+
+```bash
+git clone https://github.com/Prabhat5475/automated-invoice-processing-system.git
+cd automated-invoice-processing-system
+```
+
+2. Create and activate a virtual environment:
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
 3. Install dependencies:
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-4. Create a MySQL database named `invoice_processor`.
-5. Create the `invoices` table using the SQL schema provided below.
-6. Configure your database credentials in a `.env` file.
-7. Place the input CSV file inside `data/input/`.
+4. Install and start MySQL Server.
+
+5. Create a database named `invoice_processor` and an `invoices` table using the schema below.
+
+6. Create a MySQL user with the required database permissions.
+
+7. Create a `.env` file in the project root using `.env.example` as a reference. Add your own MySQL credentials.
+
+8. Place the input CSV file inside `data/input/`.
 
 ## Database Schema
 
 ```sql
+CREATE DATABASE invoice_processor;
+
+USE invoice_processor;
+
 CREATE TABLE invoices (
     invoice_id VARCHAR(20) PRIMARY KEY,
     customer_name VARCHAR(100) NOT NULL,
@@ -82,31 +106,36 @@ CREATE TABLE invoices (
 python src/main.py
 ```
 
+## Run Automated Tests
+
+```bash
+python -m unittest discover -s tests -v
+```
+
 ## Generated Reports
 
-The system generates two Excel workbooks:
+The system generates two Excel workbooks inside `data/output/`:
 
 1. `Processed_Invoices.xlsx` – Contains processed invoice records.
 2. `Invoice_Reports.xlsx` – Contains overall summary, payment summary, and customer-wise revenue reports.
 
-Both files are generated inside `data/output/`.
-
 ## Current Test Results
 
-Using the sample dataset:
+Using the current sample dataset:
 
-- Total input records: 12
-- Valid invoices: 10
+- Total input records: 13
+- Valid invoices: 11
 - Invalid invoices: 1
 - Duplicate invoices: 1
-- Stored invoices: 10
-- Total invoice revenue: ₹1,80,500
+- Stored invoices: 11
+- Total invoice revenue: ₹2,20,500
+
+The validation module currently has 10 automated tests.
 
 ## Future Improvements
 
 - Automated email notifications.
 - PDF invoice processing.
-- Unit testing.
 - Improved logging and exception handling.
 - A graphical user interface.
 
