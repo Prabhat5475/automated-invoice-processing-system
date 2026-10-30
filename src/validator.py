@@ -12,7 +12,11 @@ def validate_invoices(invoices):
     for invoice in invoices:
         errors = []
 
-        invoice_id = invoice["invoice_id"].strip()
+        invoice_id = (invoice.get("invoice_id") or "").strip()
+        customer_name = (invoice.get("customer_name") or "").strip()
+        invoice_date = (invoice.get("invoice_date") or "").strip()
+        amount_value = (invoice.get("amount") or "").strip()
+        status = (invoice.get("status") or "").strip().upper()
 
         # Check duplicate invoice IDs
         if invoice_id and invoice_id in seen_ids:
@@ -26,25 +30,27 @@ def validate_invoices(invoices):
         if not invoice_id:
             errors.append("Missing invoice ID")
 
-        if not invoice["customer_name"].strip():
+        if not customer_name:
             errors.append("Missing customer name")
 
         # Validate invoice date
         try:
-            datetime.strptime(invoice["invoice_date"], "%Y-%m-%d")
+            datetime.strptime(invoice_date, "%Y-%m-%d")
         except ValueError:
             errors.append("Invalid invoice date")
 
         # Validate amount
         try:
-            amount = float(invoice["amount"])
+            amount = float(amount_value)
+
             if amount <= 0:
                 errors.append("Amount must be positive")
-        except ValueError:
+
+        except (ValueError, TypeError):
             errors.append("Invalid amount")
 
         # Validate payment status
-        if invoice["status"].strip().upper() not in ["PAID", "PENDING"]:
+        if status not in ["PAID", "PENDING"]:
             errors.append("Invalid payment status")
 
         if errors:
